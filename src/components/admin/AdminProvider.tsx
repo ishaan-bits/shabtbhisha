@@ -135,7 +135,7 @@ export function useAdmin() {
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<AdminData>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("satabhisha_admin");
+      const saved = localStorage.getItem("satabhisha_admin_v2");
       if (saved) return JSON.parse(saved);
     }
     return {
@@ -156,7 +156,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("satabhisha_admin", JSON.stringify(data));
+      localStorage.setItem("satabhisha_admin_v2", JSON.stringify(data));
     }
   }, [data]);
 
