@@ -17,11 +17,8 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href="/" className="mb-4">
               <Image src="/logo.png" alt="Satabhisha" width={36} height={36} className="rounded-full brightness-0 invert" />
-              <span className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">
-                Satabhisha
-              </span>
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
               Channeling universal energy for healing, balance, and spiritual

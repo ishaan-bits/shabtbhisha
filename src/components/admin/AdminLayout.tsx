@@ -63,15 +63,14 @@ export default function AdminLayout({
         {/* Logo */}
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
           {!collapsed && (
-            <Link href="/admin/dashboard" className="flex items-center gap-2">
-                <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
-              <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
-                Satabhisha
-              </span>
+            <Link href="/admin/dashboard">
+              <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
             </Link>
           )}
           {collapsed && (
-            <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert mx-auto" />
+            <Link href="/admin/dashboard">
+              <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert mx-auto" />
+            </Link>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -154,13 +153,9 @@ export default function AdminLayout({
             <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
               <Link
                 href="/admin/dashboard"
-                className="flex items-center gap-2"
                 onClick={() => setMobileOpen(false)}
               >
-              <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
-                <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
-                  Satabhisha
-                </span>
+                <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}
