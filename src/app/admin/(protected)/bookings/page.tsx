@@ -160,18 +160,17 @@ export default function BookingsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-auto max-h-[60vh]">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
           <table className="w-full min-w-[800px]">
-            <thead className="sticky top-0 z-10">
-              <tr className="text-left text-xs text-gray-400 uppercase tracking-wider bg-gray-50">
-                <th className="px-6 py-3 font-medium">ID</th>
-                <th className="px-6 py-3 font-medium">Client</th>
-                <th className="px-6 py-3 font-medium">Service</th>
-                <th className="px-6 py-3 font-medium">Date & Time</th>
-                <th className="px-6 py-3 font-medium">Price</th>
-                <th className="px-6 py-3 font-medium">Status</th>
-                <th className="px-6 py-3 font-medium">Actions</th>
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wider bg-gray-50/50">
+                <th className="px-6 py-3">ID</th>
+                <th className="px-6 py-3">Client</th>
+                <th className="px-6 py-3">Service</th>
+                <th className="px-6 py-3">Date & Time</th>
+                <th className="px-6 py-3">Price</th>
+                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -257,7 +256,6 @@ export default function BookingsPage() {
               })}
             </tbody>
           </table>
-        </div>
 
         {filtered.length === 0 && (
           <div className="text-center py-12">
