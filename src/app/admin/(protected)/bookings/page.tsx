@@ -52,6 +52,7 @@ export default function BookingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
     null
   );
+  const [openStatusMenu, setOpenStatusMenu] = useState<string | null>(null);
 
   const filtered = bookings
     .filter(
@@ -160,7 +161,7 @@ export default function BookingsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
           <table className="w-full min-w-[800px]">
             <thead>
               <tr className="text-left text-xs text-gray-400 uppercase tracking-wider bg-gray-50/50">
@@ -216,32 +217,41 @@ export default function BookingsPage() {
                         >
                           View
                         </button>
-                        <div className="relative group">
-                          <button className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1">
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpenStatusMenu(openStatusMenu === b.id ? null : b.id)}
+                            className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+                          >
                             Status <ChevronDown className="w-3 h-3" />
                           </button>
-                          <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                            {(
-                              ["pending", "confirmed", "completed", "cancelled"] as const
-                            ).map((status) => (
-                              <button
-                                key={status}
-                                onClick={() =>
-                                  updateBookingStatus(b.id, status)
-                                }
-                                className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2 ${
-                                  b.status === status
-                                    ? "font-semibold text-accent"
-                                    : "text-gray-600"
-                                }`}
-                              >
-                                <div
-                                  className={`w-2 h-2 rounded-full ${statusConfig[status].dot}`}
-                                />
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                              </button>
-                            ))}
-                          </div>
+                          {openStatusMenu === b.id && (
+                            <>
+                              <div className="fixed inset-0 z-20" onClick={() => setOpenStatusMenu(null)} />
+                              <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-30">
+                                {(
+                                  ["pending", "confirmed", "completed", "cancelled"] as const
+                                ).map((status) => (
+                                  <button
+                                    key={status}
+                                    onClick={() => {
+                                      updateBookingStatus(b.id, status);
+                                      setOpenStatusMenu(null);
+                                    }}
+                                    className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2 ${
+                                      b.status === status
+                                        ? "font-semibold text-accent"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    <div
+                                      className={`w-2 h-2 rounded-full ${statusConfig[status].dot}`}
+                                    />
+                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
                         </div>
                         <button
                           onClick={() => setShowDeleteConfirm(b.id)}
