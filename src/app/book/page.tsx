@@ -17,6 +17,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getFirebaseDb } from "@/lib/firebase";
 import {
   format,
   startOfMonth,
@@ -111,7 +113,24 @@ export default function BookPage() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
+      await addDoc(collection(getFirebaseDb(), "bookings"), {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        service: selectedServiceData?.name ?? "",
+        date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+        time: selectedTime,
+        duration: selectedServiceData?.duration ?? "",
+        price: selectedServiceData?.price ?? "",
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("Failed to save booking:", err);
+    }
     setSubmitted(true);
   };
 
