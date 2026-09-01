@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -15,13 +15,14 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { isLoggedIn } = useAdmin();
+  const { isLoggedIn, authLoading } = useAdmin();
   const router = useRouter();
 
-  if (isLoggedIn) {
-    router.push("/admin/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (!authLoading && isLoggedIn) {
+      router.push("/admin/dashboard");
+    }
+  }, [authLoading, isLoggedIn, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +35,11 @@ export default function AdminLogin() {
     } catch (err: unknown) {
       const msg =
         err instanceof Error ? err.message : "Invalid email or password";
-      if (msg.includes("auth/invalid-credential") || msg.includes("auth/wrong-password") || msg.includes("auth/user-not-found")) {
+      if (
+        msg.includes("auth/invalid-credential") ||
+        msg.includes("auth/wrong-password") ||
+        msg.includes("auth/user-not-found")
+      ) {
         setError("Invalid email or password");
       } else {
         setError("Login failed. Please try again.");
@@ -42,6 +47,18 @@ export default function AdminLogin() {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark to-primary flex items-center justify-center">
+        <div className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isLoggedIn) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark to-primary flex items-center justify-center p-6 relative overflow-hidden">
@@ -59,7 +76,13 @@ export default function AdminLogin() {
       >
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <Image src="/logo.png" alt="Satabhisha" width={48} height={48} className="rounded-full brightness-0 invert" />
+            <Image
+              src="/logo.png"
+              alt="Satabhisha"
+              width={48}
+              height={48}
+              className="rounded-full brightness-0 invert"
+            />
             <span className="font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">
               Satabhisha
             </span>

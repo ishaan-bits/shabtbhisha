@@ -42,17 +42,16 @@ export default function AdminLayout({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isLoginPage = pathname === "/admin";
-  const shouldRedirect = !authLoading && !isLoggedIn && !isLoginPage;
+  const shouldRedirect = !authLoading && !isLoggedIn;
 
-  // Redirect away if not logged in (and not on the login page)
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (shouldRedirect) {
       router.push("/admin");
     }
   }, [shouldRedirect, router]);
 
-  // Auth loading or redirecting
+  // Show loading while checking auth
   if (authLoading || shouldRedirect) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -62,11 +61,6 @@ export default function AdminLayout({
         </div>
       </div>
     );
-  }
-
-  // Not logged in on login page — render children (the login form)
-  if (!isLoggedIn && isLoginPage) {
-    return <>{children}</>;
   }
 
   const unreadCount = data.contacts.filter((c) => c.status === "unread").length;
