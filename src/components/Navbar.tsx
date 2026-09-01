@@ -30,14 +30,14 @@ export default function Navbar() {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "glass shadow-lg shadow-primary/5"
-          : "bg-transparent"
+          ? "bg-white/90 backdrop-blur-md shadow-lg shadow-primary/5"
+          : "bg-gradient-to-b from-black/40 to-transparent"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <Sparkles className="w-6 h-6 text-accent group-hover:rotate-12 transition-transform duration-300" />
-          <span className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-primary-dark tracking-wide">
+          <Sparkles className={`w-6 h-6 transition-colors duration-300 ${scrolled ? "text-accent" : "text-accent-light"} group-hover:rotate-12 transition-transform`} />
+          <span className={`font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-wide transition-colors duration-300 ${scrolled ? "text-primary-dark" : "text-white"}`}>
             Satabhisha
           </span>
         </Link>
@@ -48,7 +48,11 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="relative text-sm font-medium text-primary-dark/70 hover:text-primary-dark transition-colors duration-300 group"
+              className={`relative text-sm font-medium transition-colors duration-300 group ${
+                scrolled
+                  ? "text-primary-dark/70 hover:text-primary-dark"
+                  : "text-white/80 hover:text-white"
+              }`}
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300" />
@@ -59,7 +63,7 @@ export default function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-primary-dark"
+          className={`md:hidden p-2 transition-colors duration-300 ${scrolled ? "text-primary-dark" : "text-white"}`}
           aria-label="Toggle menu"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -74,7 +78,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden glass border-t border-white/20"
+            className="md:hidden bg-white/95 backdrop-blur-md border-t border-primary/10 shadow-lg"
           >
             <div className="flex flex-col px-6 py-4 gap-3">
               {navLinks.map((link) => (
