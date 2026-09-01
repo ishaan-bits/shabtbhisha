@@ -7,6 +7,16 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 
 export interface Booking {
   id: string;
@@ -93,8 +103,6 @@ const defaultContent: SiteContent = {
   email: "hello@satabhisha.com",
   address: "India",
 };
-
-const defaultBookings: Booking[] = [];
 
 const defaultTestimonials: Testimonial[] = [
   {
@@ -238,13 +246,12 @@ const defaultServices: Service[] = [
   },
 ];
 
-const defaultContacts: Contact[] = [];
-
 interface AdminContextType {
   data: AdminData;
+  user: User | null;
   isLoggedIn: boolean;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  authLoading: boolean;
+  logout: () => Promise<void>;
   updateBookingStatus: (id: string, status: Booking["status"]) => void;
   deleteBooking: (id: string) => void;
   addTestimonial: (t: Omit<Testimonial, "id">) => void;
@@ -270,177 +277,216 @@ export function useAdmin() {
   return ctx;
 }
 
+async function seedCollection<T extends { id: string }>(
+  collectionName: string,
+  defaults: T[]
+) {
+  for (const item of defaults) {
+    const { id, ...data } = item;
+    await setDoc(doc(db, collectionName, id), data);
+  }
+}
+
+async function ensureContentSeeded() {
+  const { getDocs } = await import("firebase/firestore");
+  const snap = await getDocs(collection(db, "siteContent"));
+  if (snap.empty) {
+    await setDoc(doc(db, "siteContent", "main"), defaultContent);
+  }
+}
+
+async function ensureTestimonialsSeeded() {
+  const { getDocs } = await import("firebase/firestore");
+  const snap = await getDocs(collection(db, "testimonials"));
+  if (snap.empty) {
+    await seedCollection("testimonials", defaultTestimonials);
+  }
+}
+
+async function ensureServicesSeeded() {
+  const { getDocs } = await import("firebase/firestore");
+  const snap = await getDocs(collection(db, "services"));
+  if (snap.empty) {
+    await seedCollection("services", defaultServices);
+  }
+}
+
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<AdminData>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("satabhisha_admin_v2");
-      if (saved) return JSON.parse(saved);
-    }
-    return {
-      bookings: defaultBookings,
-      testimonials: defaultTestimonials,
-      services: defaultServices,
-      contacts: defaultContacts,
-      content: defaultContent,
-    };
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const [data, setData] = useState<AdminData>({
+    bookings: [],
+    testimonials: [],
+    services: [],
+    contacts: [],
+    content: defaultContent,
   });
 
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("satabhisha_loggedin") === "true";
-    }
-    return false;
-  });
+  const [seedingDone, setSeedingDone] = useState(false);
 
+  // Auth listener
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("satabhisha_admin_v2", JSON.stringify(data));
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Seed data on first load if collections are empty
+  useEffect(() => {
+    if (!user) return;
+    if (seedingDone) return;
+
+    const runSeed = async () => {
+      try {
+        await Promise.all([
+          ensureTestimonialsSeeded(),
+          ensureServicesSeeded(),
+          ensureContentSeeded(),
+        ]);
+        setSeedingDone(true);
+      } catch (err) {
+        console.error("Seeding error:", err);
+      }
+    };
+    runSeed();
+  }, [user, seedingDone]);
+
+  // Firestore listeners when logged in
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubBookings = onSnapshot(collection(db, "bookings"), (snap) => {
+      const bookings = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Booking[];
+      setData((prev) => ({ ...prev, bookings }));
+    });
+
+    const unsubTestimonials = onSnapshot(collection(db, "testimonials"), (snap) => {
+      const testimonials = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Testimonial[];
+      setData((prev) => ({ ...prev, testimonials }));
+    });
+
+    const unsubServices = onSnapshot(collection(db, "services"), (snap) => {
+      const services = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Service[];
+      setData((prev) => ({ ...prev, services }));
+    });
+
+    const unsubContacts = onSnapshot(collection(db, "contacts"), (snap) => {
+      const contacts = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Contact[];
+      setData((prev) => ({ ...prev, contacts }));
+    });
+
+    const unsubContent = onSnapshot(
+      doc(db, "siteContent", "main"),
+      (d) => {
+        if (d.exists()) {
+          setData((prev) => ({ ...prev, content: d.data() as SiteContent }));
+        }
+      }
+    );
+
+    return () => {
+      unsubBookings();
+      unsubTestimonials();
+      unsubServices();
+      unsubContacts();
+      unsubContent();
+    };
+  }, [user]);
+
+  const logout = async () => {
+    const { signOut } = await import("firebase/auth");
+    await signOut(auth);
+    setData({
+      bookings: [],
+      testimonials: [],
+      contacts: [],
+      services: [],
+      content: defaultContent,
+    });
+    setSeedingDone(false);
+  };
+
+  const updateBookingStatus = async (id: string, status: Booking["status"]) => {
+    await updateDoc(doc(db, "bookings", id), { status });
+  };
+
+  const deleteBooking = async (id: string) => {
+    await deleteDoc(doc(db, "bookings", id));
+  };
+
+  const addTestimonial = async (t: Omit<Testimonial, "id">) => {
+    const id = `TM${Date.now()}`;
+    await setDoc(doc(db, "testimonials", id), t);
+  };
+
+  const updateTestimonial = async (id: string, t: Partial<Testimonial>) => {
+    await updateDoc(doc(db, "testimonials", id), t);
+  };
+
+  const deleteTestimonial = async (id: string) => {
+    await deleteDoc(doc(db, "testimonials", id));
+  };
+
+  const toggleTestimonialFeatured = async (id: string) => {
+    const current = data.testimonials.find((t) => t.id === id);
+    if (current) {
+      await updateDoc(doc(db, "testimonials", id), { featured: !current.featured });
     }
-  }, [data]);
+  };
 
-  const login = (username: string, password: string) => {
-    if (username === "admin" && password === "satabhisha2026") {
-      setIsLoggedIn(true);
-      localStorage.setItem("satabhisha_loggedin", "true");
-      return true;
+  const toggleTestimonialVisible = async (id: string) => {
+    const current = data.testimonials.find((t) => t.id === id);
+    if (current) {
+      await updateDoc(doc(db, "testimonials", id), { visible: !current.visible });
     }
-    return false;
   };
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("satabhisha_loggedin");
+  const addService = async (s: Omit<Service, "id">) => {
+    const id = `SV${Date.now()}`;
+    await setDoc(doc(db, "services", id), s);
   };
 
-  const updateBookingStatus = (id: string, status: Booking["status"]) => {
-    setData((prev) => ({
-      ...prev,
-      bookings: prev.bookings.map((b) =>
-        b.id === id ? { ...b, status } : b
-      ),
-    }));
+  const updateService = async (id: string, s: Partial<Service>) => {
+    await updateDoc(doc(db, "services", id), s);
   };
 
-  const deleteBooking = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      bookings: prev.bookings.filter((b) => b.id !== id),
-    }));
+  const deleteService = async (id: string) => {
+    await deleteDoc(doc(db, "services", id));
   };
 
-  const addTestimonial = (t: Omit<Testimonial, "id">) => {
-    const id = `TM${String(data.testimonials.length + 1).padStart(3, "0")}`;
-    setData((prev) => ({
-      ...prev,
-      testimonials: [...prev.testimonials, { ...t, id }],
-    }));
+  const toggleServiceActive = async (id: string) => {
+    const current = data.services.find((s) => s.id === id);
+    if (current) {
+      await updateDoc(doc(db, "services", id), { active: !current.active });
+    }
   };
 
-  const updateTestimonial = (id: string, t: Partial<Testimonial>) => {
-    setData((prev) => ({
-      ...prev,
-      testimonials: prev.testimonials.map((tm) =>
-        tm.id === id ? { ...tm, ...t } : tm
-      ),
-    }));
+  const updateContent = async (c: Partial<SiteContent>) => {
+    await updateDoc(doc(db, "siteContent", "main"), c);
   };
 
-  const deleteTestimonial = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      testimonials: prev.testimonials.filter((t) => t.id !== id),
-    }));
+  const markContactRead = async (id: string) => {
+    await updateDoc(doc(db, "contacts", id), { status: "read" });
   };
 
-  const toggleTestimonialFeatured = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      testimonials: prev.testimonials.map((t) =>
-        t.id === id ? { ...t, featured: !t.featured } : t
-      ),
-    }));
+  const markContactReplied = async (id: string) => {
+    await updateDoc(doc(db, "contacts", id), { status: "replied" });
   };
 
-  const toggleTestimonialVisible = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      testimonials: prev.testimonials.map((t) =>
-        t.id === id ? { ...t, visible: !t.visible } : t
-      ),
-    }));
-  };
-
-  const addService = (s: Omit<Service, "id">) => {
-    const id = `SV${String(data.services.length + 1).padStart(3, "0")}`;
-    setData((prev) => ({
-      ...prev,
-      services: [...prev.services, { ...s, id }],
-    }));
-  };
-
-  const updateService = (id: string, s: Partial<Service>) => {
-    setData((prev) => ({
-      ...prev,
-      services: prev.services.map((sv) =>
-        sv.id === id ? { ...sv, ...s } : sv
-      ),
-    }));
-  };
-
-  const deleteService = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      services: prev.services.filter((s) => s.id !== id),
-    }));
-  };
-
-  const toggleServiceActive = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      services: prev.services.map((s) =>
-        s.id === id ? { ...s, active: !s.active } : s
-      ),
-    }));
-  };
-
-  const updateContent = (c: Partial<SiteContent>) => {
-    setData((prev) => ({
-      ...prev,
-      content: { ...prev.content, ...c },
-    }));
-  };
-
-  const markContactRead = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      contacts: prev.contacts.map((c) =>
-        c.id === id ? { ...c, status: "read" as const } : c
-      ),
-    }));
-  };
-
-  const markContactReplied = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      contacts: prev.contacts.map((c) =>
-        c.id === id ? { ...c, status: "replied" as const } : c
-      ),
-    }));
-  };
-
-  const deleteContact = (id: string) => {
-    setData((prev) => ({
-      ...prev,
-      contacts: prev.contacts.filter((c) => c.id !== id),
-    }));
+  const deleteContact = async (id: string) => {
+    await deleteDoc(doc(db, "contacts", id));
   };
 
   return (
     <AdminContext.Provider
       value={{
         data,
-        isLoggedIn,
-        login,
+        user,
+        isLoggedIn: !!user,
+        authLoading,
         logout,
         updateBookingStatus,
         deleteBooking,

@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Testimonials: authenticated can do anything, public can read visible ones
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Services: authenticated can do anything, public can read active ones
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Site Content: authenticated can do anything, public can read
+    match /siteContent/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Bookings: authenticated can do anything, public can create
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null;
+      allow create: if true;
+      allow update, delete: if request.auth != null;
+    }
+
+    // Contacts: authenticated can do anything, public can create
+    match /contacts/{contactId} {
+      allow read: if request.auth != null;
+      allow create: if true;
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

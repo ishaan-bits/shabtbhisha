@@ -1,14 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Testimonial, Service } from "@/components/admin/AdminProvider";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import type { Testimonial, Service, SiteContent } from "@/components/admin/AdminProvider";
 
-const STORAGE_KEY = "satabhisha_admin_v2";
-
-interface SiteData {
-  testimonials: Testimonial[];
-  services: Service[];
-}
+const fallbackContent: SiteContent = {
+  heroTitle: "Restore Your Inner Light",
+  heroSubtitle:
+    "Experience the gentle power of Reiki healing with Astitwa Ankur. Release energy blockages, find deep relaxation, and awaken your body's natural healing ability.",
+  aboutText:
+    "Satabhisha, founded by Astitwa Ankur, is a sanctuary for those seeking healing beyond the physical realm.",
+  ctaTitle: "Begin Your Healing Journey",
+  ctaText: "Every healing journey begins with a single step.",
+  founderName: "Astitwa Ankur",
+  founderBio:
+    "Certified Reiki Master and energy healer with over eight years of dedicated practice.",
+  phone: "+91 98765 43210",
+  email: "hello@satabhisha.com",
+  address: "India",
+};
 
 const fallbackTestimonials: Testimonial[] = [
   {
@@ -152,47 +163,66 @@ const fallbackServices: Service[] = [
   },
 ];
 
-function readFromStorage(): SiteData {
-  if (typeof window === "undefined") {
-    return { testimonials: fallbackTestimonials, services: fallbackServices };
-  }
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { testimonials: fallbackTestimonials, services: fallbackServices };
-    const parsed = JSON.parse(raw);
-    return {
-      testimonials:
-        parsed.testimonials && parsed.testimonials.length > 0
-          ? parsed.testimonials
-          : fallbackTestimonials,
-      services:
-        parsed.services && parsed.services.length > 0
-          ? parsed.services
-          : fallbackServices,
-    };
-  } catch {
-    return { testimonials: fallbackTestimonials, services: fallbackServices };
-  }
-}
-
 export function useSiteData() {
-  const [data, setData] = useState<SiteData>(readFromStorage);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
+  const [services, setServices] = useState<Service[]>(fallbackServices);
+  const [content, setContent] = useState<SiteContent>(fallbackContent);
 
   useEffect(() => {
-    const update = () => setData(readFromStorage());
-    window.addEventListener("storage", update);
-    // Also poll in case admin tab modifies localStorage
-    const interval = setInterval(update, 2000);
+    // If Firestore rules deny access, onSnapshot fires the error callback
+    // and we keep the fallback data — site works perfectly without Firestore.
+    const unsubTestimonials = onSnapshot(
+      collection(db, "testimonials"),
+      (snap) => {
+        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Testimonial[];
+        if (items.length > 0) {
+          setTestimonials(items);
+        }
+        // If empty, keep current state (fallback)
+      },
+      () => {
+        // Permission denied or error — keep fallback data
+      }
+    );
+
+    const unsubServices = onSnapshot(
+      collection(db, "services"),
+      (snap) => {
+        const items = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Service[];
+        if (items.length > 0) {
+          setServices(items);
+        }
+      },
+      () => {
+        // Permission denied or error — keep fallback data
+      }
+    );
+
+    const unsubContent = onSnapshot(
+      collection(db, "siteContent"),
+      (snap) => {
+        const doc = snap.docs.find((d) => d.id === "main");
+        if (doc) {
+          setContent(doc.data() as SiteContent);
+        }
+      },
+      () => {
+        // Permission denied or error — keep fallback data
+      }
+    );
+
     return () => {
-      window.removeEventListener("storage", update);
-      clearInterval(interval);
+      unsubTestimonials();
+      unsubServices();
+      unsubContent();
     };
   }, []);
 
   return {
-    testimonials: data.testimonials.filter((t) => t.visible),
-    services: data.services.filter((s) => s.active),
-    allServices: data.services,
-    allTestimonials: data.testimonials,
+    testimonials: testimonials.filter((t) => t.visible),
+    services: services.filter((s) => s.active),
+    allServices: services,
+    allTestimonials: testimonials,
+    content,
   };
 }

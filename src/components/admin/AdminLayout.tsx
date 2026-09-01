@@ -17,7 +17,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAdmin } from "./AdminProvider";
 
 const navItems = [
@@ -36,9 +37,37 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { logout, data } = useAdmin();
+  const { logout, data, isLoggedIn, authLoading } = useAdmin();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isLoginPage = pathname === "/admin";
+  const shouldRedirect = !authLoading && !isLoggedIn && !isLoginPage;
+
+  // Redirect away if not logged in (and not on the login page)
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/admin");
+    }
+  }, [shouldRedirect, router]);
+
+  // Auth loading or redirecting
+  if (authLoading || shouldRedirect) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-3 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in on login page — render children (the login form)
+  if (!isLoggedIn && isLoginPage) {
+    return <>{children}</>;
+  }
 
   const unreadCount = data.contacts.filter((c) => c.status === "unread").length;
   const pendingBookings = data.bookings.filter(
@@ -52,6 +81,11 @@ export default function AdminLayout({
     return null;
   };
 
+  const handleLogout = async () => {
+    await logout();
+    router.push("/admin");
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar - Desktop */}
@@ -60,7 +94,6 @@ export default function AdminLayout({
           collapsed ? "w-20" : "w-64"
         }`}
       >
-        {/* Logo */}
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
           {!collapsed && (
             <Link href="/admin/dashboard" className="flex items-center gap-2">
@@ -85,7 +118,6 @@ export default function AdminLayout({
           </button>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -118,7 +150,6 @@ export default function AdminLayout({
           })}
         </nav>
 
-        {/* Footer */}
         <div className="border-t border-white/10 p-3 space-y-2">
           <Link
             href="/"
@@ -129,7 +160,7 @@ export default function AdminLayout({
             {!collapsed && <span>View Site</span>}
           </Link>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
           >
             <LogOut className="w-5 h-5" />
@@ -197,7 +228,7 @@ export default function AdminLayout({
             </nav>
             <div className="border-t border-white/10 p-3">
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
               >
                 <LogOut className="w-5 h-5" />
@@ -210,7 +241,6 @@ export default function AdminLayout({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
         <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <button
@@ -239,7 +269,6 @@ export default function AdminLayout({
           </div>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 p-6 overflow-auto">{children}</main>
       </div>
     </div>

@@ -6,14 +6,16 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAdmin } from "@/components/admin/AdminProvider";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, isLoggedIn } = useAdmin();
+  const { isLoggedIn } = useAdmin();
   const router = useRouter();
 
   if (isLoggedIn) {
@@ -26,21 +28,23 @@ export default function AdminLogin() {
     setError("");
     setLoading(true);
 
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 800));
-
-    const success = login(username, password);
-    if (success) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin/dashboard");
-    } else {
-      setError("Invalid username or password");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Invalid email or password";
+      if (msg.includes("auth/invalid-credential") || msg.includes("auth/wrong-password") || msg.includes("auth/user-not-found")) {
+        setError("Invalid email or password");
+      } else {
+        setError("Login failed. Please try again.");
+      }
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark to-primary flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" />
       <div
         className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-lavender/10 rounded-full blur-3xl animate-float"
@@ -53,7 +57,6 @@ export default function AdminLogin() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
             <Image src="/logo.png" alt="Satabhisha" width={48} height={48} className="rounded-full brightness-0 invert" />
@@ -64,7 +67,6 @@ export default function AdminLogin() {
           <p className="text-white/50 text-sm">Admin Console</p>
         </div>
 
-        {/* Login Card */}
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
           <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white mb-2 text-center">
             Welcome Back
@@ -76,13 +78,13 @@ export default function AdminLogin() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-white/70 mb-1.5">
-                Username
+                Email
               </label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@satabhisha.com"
                 className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
                 required
               />
@@ -137,13 +139,6 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          <div className="mt-6 p-3 rounded-xl bg-white/5 border border-white/5">
-            <p className="text-white/30 text-xs text-center">
-              Demo credentials: <span className="text-white/50">admin</span> /{" "}
-              <span className="text-white/50">satabhisha2026</span>
-            </p>
-          </div>
         </div>
       </motion.div>
     </div>
