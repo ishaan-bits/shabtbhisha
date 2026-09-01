@@ -55,8 +55,11 @@ export default function AdminLogin() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="mb-4">
-            <Image src="/logo.png" alt="Satabhisha" width={56} height={56} className="rounded-full brightness-0 invert mx-auto" />
+          <div className="inline-flex items-center gap-2 mb-4">
+            <Image src="/logo.png" alt="Satabhisha" width={48} height={48} className="rounded-full brightness-0 invert" />
+            <span className="font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">
+              Satabhisha
+            </span>
           </div>
           <p className="text-white/50 text-sm">Admin Console</p>
         </div>
