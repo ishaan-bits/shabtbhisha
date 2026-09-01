@@ -15,54 +15,9 @@ import {
   Users,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { useSiteData } from "@/hooks/useSiteData";
 
-const services = [
-  {
-    icon: Sparkles,
-    title: "Distance Reiki",
-    description:
-      "Healing energy transmitted across any distance, restoring balance to your mind, body, and spirit.",
-  },
-  {
-    icon: Heart,
-    title: "Chakra Balancing",
-    description:
-      "Align and harmonize your seven energy centers for optimal physical and emotional well-being.",
-  },
-  {
-    icon: Leaf,
-    title: "Aura Cleansing",
-    description:
-      "Clear negative energy and strengthen your auric field for protection and clarity.",
-  },
-  {
-    icon: Sun,
-    title: "Crystal Healing",
-    description:
-      "Harness the vibrational power of crystals to amplify healing and spiritual growth.",
-  },
-];
-
-const testimonials = [
-  {
-    name: "Priya Sharma",
-    role: "Yoga Instructor",
-    text: "After just three sessions with Astitwa, I felt a profound shift in my energy. My meditation practice deepened and chronic shoulder pain vanished.",
-    rating: 5,
-  },
-  {
-    name: "Rahul Mehta",
-    role: "Software Engineer",
-    text: "I was skeptical at first, but the distance Reiki session helped me overcome severe anxiety. I sleep better and feel more focused than ever.",
-    rating: 5,
-  },
-  {
-    name: "Ananya Das",
-    role: "Artist & Creative",
-    text: "The chakra balancing session was transformative. A intuitively identified blockages I had been carrying for years. Truly gifted healer.",
-    rating: 5,
-  },
-];
+const serviceIcons = [Sparkles, Heart, Leaf, Sun];
 
 const stats = [
   { number: "500+", label: "Healing Sessions" },
@@ -72,6 +27,10 @@ const stats = [
 ];
 
 export default function Home() {
+  const { testimonials, services: liveServices } = useSiteData();
+  const displayServices = liveServices.slice(0, 4);
+  const displayTestimonials = testimonials.filter((t) => t.featured).slice(0, 3);
+
   return (
     <>
       {/* Hero Section */}
@@ -266,18 +225,18 @@ export default function Home() {
           </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
+            {displayServices.map((service, i) => (
+              <AnimatedSection key={service.id} delay={i * 0.1}>
                 <motion.div
                   whileHover={{ y: -8 }}
                   transition={{ duration: 0.3 }}
                   className="bg-white rounded-2xl p-8 shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-accent/10 transition-shadow duration-300 h-full"
                 >
                   <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
-                    <service.icon className="w-6 h-6 text-accent" />
+                    {(() => { const Icon = serviceIcons[i % serviceIcons.length]; return <Icon className="w-6 h-6 text-accent" />; })()}
                   </div>
                   <h3 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-primary-dark mb-3">
-                    {service.title}
+                    {service.name}
                   </h3>
                   <p className="text-primary/60 text-sm leading-relaxed">
                     {service.description}
@@ -376,8 +335,8 @@ export default function Home() {
           </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
+            {displayTestimonials.map((t) => (
+              <AnimatedSection key={t.id} delay={0.1}>
                 <motion.div
                   whileHover={{ y: -4 }}
                   className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 h-full"
