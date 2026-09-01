@@ -37,7 +37,7 @@ export default function Navbar() {
     >
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <Image src="/logo.png" alt="Satabhisha" width={40} height={40} className="rounded-full group-hover:rotate-12 transition-transform duration-300" />
+          <Image src="/logo.png" alt="Satabhisha" width={40} height={40} className="rounded-full brightness-0 invert group-hover:rotate-12 transition-transform duration-300" />
           <span className={`font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-wide transition-colors duration-300 ${scrolled ? "text-primary-dark" : "text-white"}`}>
             Satabhisha
           </span>

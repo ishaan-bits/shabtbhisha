@@ -18,7 +18,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <Image src="/logo.png" alt="Satabhisha" width={36} height={36} className="rounded-full" />
+              <Image src="/logo.png" alt="Satabhisha" width={36} height={36} className="rounded-full brightness-0 invert" />
               <span className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">
                 Satabhisha
               </span>
