@@ -104,7 +104,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Satabhisha. All rights reserved.
           </p>
           <p className="text-xs text-white/40 flex items-center gap-1">
-            Made with <Heart className="w-3 h-3 text-accent" /> by Astitwa Ankur
+            Made with <Heart className="w-3 h-3 text-accent" /> by Ishaan Parimal
           </p>
         </div>
       </div>
