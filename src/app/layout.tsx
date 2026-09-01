@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import SiteShell from "@/components/SiteShell";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-heading",
@@ -41,9 +40,7 @@ export default function RootLayout({
       className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-body)]">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
