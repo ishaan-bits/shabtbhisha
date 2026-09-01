@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAdmin } from "@/components/admin/AdminProvider";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -30,7 +30,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       router.push("/admin/dashboard");
     } catch (err: unknown) {
       const msg =

@@ -16,7 +16,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 
 export interface Booking {
   id: string;
@@ -281,6 +281,7 @@ async function seedCollection<T extends { id: string }>(
   collectionName: string,
   defaults: T[]
 ) {
+  const db = getFirebaseDb();
   for (const item of defaults) {
     const { id, ...data } = item;
     await setDoc(doc(db, collectionName, id), data);
@@ -288,6 +289,7 @@ async function seedCollection<T extends { id: string }>(
 }
 
 async function ensureContentSeeded() {
+  const db = getFirebaseDb();
   const { getDocs } = await import("firebase/firestore");
   const snap = await getDocs(collection(db, "siteContent"));
   if (snap.empty) {
@@ -296,6 +298,7 @@ async function ensureContentSeeded() {
 }
 
 async function ensureTestimonialsSeeded() {
+  const db = getFirebaseDb();
   const { getDocs } = await import("firebase/firestore");
   const snap = await getDocs(collection(db, "testimonials"));
   if (snap.empty) {
@@ -304,6 +307,7 @@ async function ensureTestimonialsSeeded() {
 }
 
 async function ensureServicesSeeded() {
+  const db = getFirebaseDb();
   const { getDocs } = await import("firebase/firestore");
   const snap = await getDocs(collection(db, "services"));
   if (snap.empty) {
@@ -327,7 +331,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   // Auth listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (firebaseUser) => {
       setUser(firebaseUser);
       setAuthLoading(false);
     });
@@ -358,28 +362,28 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
-    const unsubBookings = onSnapshot(collection(db, "bookings"), (snap) => {
+    const unsubBookings = onSnapshot(collection(getFirebaseDb(), "bookings"), (snap) => {
       const bookings = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Booking[];
       setData((prev) => ({ ...prev, bookings }));
     });
 
-    const unsubTestimonials = onSnapshot(collection(db, "testimonials"), (snap) => {
+    const unsubTestimonials = onSnapshot(collection(getFirebaseDb(), "testimonials"), (snap) => {
       const testimonials = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Testimonial[];
       setData((prev) => ({ ...prev, testimonials }));
     });
 
-    const unsubServices = onSnapshot(collection(db, "services"), (snap) => {
+    const unsubServices = onSnapshot(collection(getFirebaseDb(), "services"), (snap) => {
       const services = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Service[];
       setData((prev) => ({ ...prev, services }));
     });
 
-    const unsubContacts = onSnapshot(collection(db, "contacts"), (snap) => {
+    const unsubContacts = onSnapshot(collection(getFirebaseDb(), "contacts"), (snap) => {
       const contacts = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Contact[];
       setData((prev) => ({ ...prev, contacts }));
     });
 
     const unsubContent = onSnapshot(
-      doc(db, "siteContent", "main"),
+      doc(getFirebaseDb(), "siteContent", "main"),
       (d) => {
         if (d.exists()) {
           setData((prev) => ({ ...prev, content: d.data() as SiteContent }));
@@ -398,7 +402,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     const { signOut } = await import("firebase/auth");
-    await signOut(auth);
+    await signOut(getFirebaseAuth());
     setData({
       bookings: [],
       testimonials: [],
@@ -410,74 +414,74 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const updateBookingStatus = async (id: string, status: Booking["status"]) => {
-    await updateDoc(doc(db, "bookings", id), { status });
+    await updateDoc(doc(getFirebaseDb(), "bookings", id), { status });
   };
 
   const deleteBooking = async (id: string) => {
-    await deleteDoc(doc(db, "bookings", id));
+    await deleteDoc(doc(getFirebaseDb(), "bookings", id));
   };
 
   const addTestimonial = async (t: Omit<Testimonial, "id">) => {
     const id = `TM${Date.now()}`;
-    await setDoc(doc(db, "testimonials", id), t);
+    await setDoc(doc(getFirebaseDb(), "testimonials", id), t);
   };
 
   const updateTestimonial = async (id: string, t: Partial<Testimonial>) => {
-    await updateDoc(doc(db, "testimonials", id), t);
+    await updateDoc(doc(getFirebaseDb(), "testimonials", id), t);
   };
 
   const deleteTestimonial = async (id: string) => {
-    await deleteDoc(doc(db, "testimonials", id));
+    await deleteDoc(doc(getFirebaseDb(), "testimonials", id));
   };
 
   const toggleTestimonialFeatured = async (id: string) => {
     const current = data.testimonials.find((t) => t.id === id);
     if (current) {
-      await updateDoc(doc(db, "testimonials", id), { featured: !current.featured });
+      await updateDoc(doc(getFirebaseDb(), "testimonials", id), { featured: !current.featured });
     }
   };
 
   const toggleTestimonialVisible = async (id: string) => {
     const current = data.testimonials.find((t) => t.id === id);
     if (current) {
-      await updateDoc(doc(db, "testimonials", id), { visible: !current.visible });
+      await updateDoc(doc(getFirebaseDb(), "testimonials", id), { visible: !current.visible });
     }
   };
 
   const addService = async (s: Omit<Service, "id">) => {
     const id = `SV${Date.now()}`;
-    await setDoc(doc(db, "services", id), s);
+    await setDoc(doc(getFirebaseDb(), "services", id), s);
   };
 
   const updateService = async (id: string, s: Partial<Service>) => {
-    await updateDoc(doc(db, "services", id), s);
+    await updateDoc(doc(getFirebaseDb(), "services", id), s);
   };
 
   const deleteService = async (id: string) => {
-    await deleteDoc(doc(db, "services", id));
+    await deleteDoc(doc(getFirebaseDb(), "services", id));
   };
 
   const toggleServiceActive = async (id: string) => {
     const current = data.services.find((s) => s.id === id);
     if (current) {
-      await updateDoc(doc(db, "services", id), { active: !current.active });
+      await updateDoc(doc(getFirebaseDb(), "services", id), { active: !current.active });
     }
   };
 
   const updateContent = async (c: Partial<SiteContent>) => {
-    await updateDoc(doc(db, "siteContent", "main"), c);
+    await updateDoc(doc(getFirebaseDb(), "siteContent", "main"), c);
   };
 
   const markContactRead = async (id: string) => {
-    await updateDoc(doc(db, "contacts", id), { status: "read" });
+    await updateDoc(doc(getFirebaseDb(), "contacts", id), { status: "read" });
   };
 
   const markContactReplied = async (id: string) => {
-    await updateDoc(doc(db, "contacts", id), { status: "replied" });
+    await updateDoc(doc(getFirebaseDb(), "contacts", id), { status: "replied" });
   };
 
   const deleteContact = async (id: string) => {
-    await deleteDoc(doc(db, "contacts", id));
+    await deleteDoc(doc(getFirebaseDb(), "contacts", id));
   };
 
   return (

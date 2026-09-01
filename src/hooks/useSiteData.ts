@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import type { Testimonial, Service, SiteContent } from "@/components/admin/AdminProvider";
 
 const fallbackContent: SiteContent = {
@@ -169,6 +169,7 @@ export function useSiteData() {
   const [content, setContent] = useState<SiteContent>(fallbackContent);
 
   useEffect(() => {
+    const db = getFirebaseDb();
     // If Firestore rules deny access, onSnapshot fires the error callback
     // and we keep the fallback data — site works perfectly without Firestore.
     const unsubTestimonials = onSnapshot(
