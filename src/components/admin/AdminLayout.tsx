@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -10,7 +11,6 @@ import {
   Settings,
   FileText,
   MessageSquare,
-  Sparkles,
   LogOut,
   ChevronLeft,
   Package,
@@ -64,14 +64,14 @@ export default function AdminLayout({
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
           {!collapsed && (
             <Link href="/admin/dashboard" className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-accent" />
+              <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full" />
               <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
                 Satabhisha
               </span>
             </Link>
           )}
           {collapsed && (
-            <Sparkles className="w-6 h-6 text-accent mx-auto" />
+            <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full mx-auto" />
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -157,7 +157,7 @@ export default function AdminLayout({
                 className="flex items-center gap-2"
                 onClick={() => setMobileOpen(false)}
               >
-                <Sparkles className="w-6 h-6 text-accent" />
+                <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full" />
                 <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
                   Satabhisha
                 </span>

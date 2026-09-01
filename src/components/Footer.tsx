@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Heart, Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
+import { Heart, Mail, Phone, MapPin } from "lucide-react";
 import { FaInstagram, FaFacebook, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
@@ -17,7 +18,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-accent" />
+              <Image src="/logo.png" alt="Satabhisha" width={36} height={36} className="rounded-full" />
               <span className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">
                 Satabhisha
               </span>

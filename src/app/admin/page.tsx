@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAdmin } from "@/components/admin/AdminProvider";
 
 export default function AdminLogin() {
@@ -55,7 +56,7 @@ export default function AdminLogin() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="w-8 h-8 text-accent" />
+            <Image src="/logo.png" alt="Satabhisha" width={48} height={48} className="rounded-full" />
             <span className="font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">
               Satabhisha
             </span>
