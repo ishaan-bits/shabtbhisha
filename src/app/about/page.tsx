@@ -107,7 +107,7 @@ export default function AboutPage() {
               <div className="relative">
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/10">
                   <Image
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
+                    src="/astitwa.png"
                     alt="Astitwa Ankur - Reiki Master"
                     width={600}
                     height={700}
