@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -144,20 +145,25 @@ export default function BookPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-cream overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-lavender/10 rounded-full blur-3xl" />
+      <section className="relative pt-32 pb-16 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=1920&q=80"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-primary-dark/70" />
 
-        <div className="relative max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-6 z-10">
           <AnimatedSection>
             <span className="text-accent font-medium text-sm uppercase tracking-widest">
               Book a Session
             </span>
-            <h1 className="font-[family-name:var(--font-heading)] text-5xl md:text-6xl lg:text-7xl font-light text-primary-dark mt-4 mb-6">
+            <h1 className="font-[family-name:var(--font-heading)] text-5xl md:text-6xl lg:text-7xl font-light text-white mt-4 mb-6">
               Schedule Your{" "}
               <span className="italic font-normal">Healing</span>
             </h1>
-            <p className="text-primary/60 max-w-2xl text-lg leading-relaxed">
+            <p className="text-white/60 max-w-2xl text-lg leading-relaxed">
               Choose your healing modality, pick a date and time, and take the
               first step toward balance and renewal.
             </p>
