@@ -1,5 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
+import { getAuth, Auth, browserSessionPersistence, setPersistence } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -23,9 +23,15 @@ function getApp() {
   return app;
 }
 
+let persistenceSet = false;
+
 function getFirebaseAuth() {
   if (!auth) {
     auth = getAuth(getApp());
+    if (!persistenceSet) {
+      persistenceSet = true;
+      setPersistence(auth, browserSessionPersistence);
+    }
   }
   return auth;
 }
