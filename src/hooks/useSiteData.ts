@@ -10,14 +10,14 @@ const fallbackContent: SiteContent = {
   heroSubtitle:
     "Experience the gentle power of Reiki healing with Astitwa Ankur. Release energy blockages, find deep relaxation, and awaken your body's natural healing ability.",
   aboutText:
-    "Satabhisha, founded by Astitwa Ankur, is a sanctuary for those seeking healing beyond the physical realm.",
+    "Shatabhisha, founded by Astitwa Ankur, is a sanctuary for those seeking healing beyond the physical realm.",
   ctaTitle: "Begin Your Healing Journey",
   ctaText: "Every healing journey begins with a single step.",
   founderName: "Astitwa Ankur",
   founderBio:
     "Certified Reiki Master and energy healer with over eight years of dedicated practice.",
   phone: "+91 98765 43210",
-  email: "hello@satabhisha.com",
+  email: "hello@shatabhisha.com",
   address: "India",
 };
 

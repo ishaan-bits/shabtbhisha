@@ -1,6 +1,6 @@
-# Satabhisha
+# Shatabhisha
 
-A modern website for **Satabhisha**, a Reiki healing practice founded by Astitwa Ankur. Built with Next.js, Firebase, and Tailwind CSS.
+A modern website for **Shatabhisha**, a Reiki healing practice founded by Astitwa Ankur. Built with Next.js, Firebase, and Tailwind CSS.
 
 **Live site:** [shabtbhisha.vercel.app](https://shabtbhisha.vercel.app)
 

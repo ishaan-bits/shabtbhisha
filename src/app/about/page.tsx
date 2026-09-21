@@ -33,8 +33,8 @@ const journey = [
   },
   {
     year: "2021",
-    title: "Satabhisha Founded",
-    desc: "Established Satabhisha as a platform to make energy healing accessible to a wider community across India and beyond.",
+    title: "Shatabhisha Founded",
+    desc: "Established Shatabhisha as a platform to make energy healing accessible to a wider community across India and beyond.",
   },
   {
     year: "Present",
@@ -92,10 +92,10 @@ export default function AboutPage() {
             </span>
             <h1 className="font-[family-name:var(--font-heading)] text-5xl md:text-6xl lg:text-7xl font-light text-white mt-4 mb-6">
               About{" "}
-              <span className="italic font-normal">Satabhisha</span>
+              <span className="italic font-normal">Shatabhisha</span>
             </h1>
             <p className="text-white/60 max-w-2xl text-lg leading-relaxed">
-              Born from a deep calling to serve and heal, Satabhisha is the
+              Born from a deep calling to serve and heal, Shatabhisha is the
               manifestation of years of study, practice, and unwavering
               dedication to the art of energy healing.
             </p>
@@ -145,7 +145,7 @@ export default function AboutPage() {
                 <p className="text-primary/70 leading-relaxed mb-6">
                   After rigorous training in traditional Reiki at all three
                   levels and extensive study of crystal healing, aura reading,
-                  and chakra therapy, Astitwa founded Satabhisha to make
+                  and chakra therapy, Astitwa founded Shatabhisha to make
                   energy healing accessible to all who seek it. His gentle,
                   intuitive approach has helped hundreds find relief from
                   stress, anxiety, physical ailments, and emotional blockages.

@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Satabhisha | Reiki Healing & Energy Wellness",
+  title: "Shatabhisha | Reiki Healing & Energy Wellness",
   description:
     "Experience transformative Reiki healing with Astitwa Ankur. Balance your energy, restore harmony, and embark on a journey of spiritual wellness.",
   keywords: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     "spiritual wellness",
     "chakra balancing",
     "meditation",
-    "satabhisha",
+    "shatabhisha",
     "astitwa ankur",
   ],
 };

@@ -91,14 +91,14 @@ export default function AdminLayout({
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
           {!collapsed && (
             <Link href="/admin/dashboard" className="flex items-center gap-2">
-                <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
+                <Image src="/logo.png" alt="Shatabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
               <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
-                Satabhisha
+                Shatabhisha
               </span>
             </Link>
           )}
           {collapsed && (
-            <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert mx-auto" />
+            <Image src="/logo.png" alt="Shatabhisha" width={32} height={32} className="rounded-full brightness-0 invert mx-auto" />
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -182,9 +182,9 @@ export default function AdminLayout({
                 className="flex items-center gap-2"
                 onClick={() => setMobileOpen(false)}
               >
-              <Image src="/logo.png" alt="Satabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
+              <Image src="/logo.png" alt="Shatabhisha" width={32} height={32} className="rounded-full brightness-0 invert" />
                 <span className="font-[family-name:var(--font-heading)] text-lg font-semibold">
-                  Satabhisha
+                  Shatabhisha
                 </span>
               </Link>
               <button

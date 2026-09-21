@@ -62,7 +62,7 @@ export default function TestimonialsPage() {
               Stories of <span className="italic font-normal">Healing</span>
             </h1>
             <p className="text-white/60 max-w-2xl text-lg leading-relaxed">
-              Read firsthand accounts from individuals who have experienced the transformative power of Reiki healing at Satabhisha.
+              Read firsthand accounts from individuals who have experienced the transformative power of Reiki healing at Shatabhisha.
             </p>
           </AnimatedSection>
         </div>

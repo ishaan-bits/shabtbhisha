@@ -18,9 +18,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <Image src="/logo.png" alt="Satabhisha" width={36} height={36} className="rounded-full brightness-0 invert" />
+              <Image src="/logo.png" alt="Shatabhisha" width={36} height={36} className="rounded-full brightness-0 invert" />
               <span className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">
-                Satabhisha
+                Shatabhisha
               </span>
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
@@ -61,7 +61,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm text-white/60">
                 <Mail className="w-4 h-4 text-accent" />
-                hello@satabhisha.com
+                hello@shatabhisha.com
               </li>
               <li className="flex items-center gap-3 text-sm text-white/60">
                 <Phone className="w-4 h-4 text-accent" />
@@ -101,7 +101,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/40">
-            &copy; {new Date().getFullYear()} Satabhisha. All rights reserved.
+            &copy; {new Date().getFullYear()} Shatabhisha. All rights reserved.
           </p>
           <p className="text-xs text-white/40 flex items-center gap-1">
             Made with <Heart className="w-3 h-3 text-accent" /> by Ishaan Parimal

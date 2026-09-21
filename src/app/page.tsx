@@ -175,14 +175,14 @@ export default function Home() {
             <AnimatedSection delay={0.2}>
               <div>
                 <span className="text-accent font-medium text-sm uppercase tracking-widest">
-                  About Satabhisha
+                  About Shatabhisha
                 </span>
                 <h2 className="font-[family-name:var(--font-heading)] text-4xl md:text-5xl font-light text-primary-dark mt-4 mb-6 leading-tight">
                   A Journey Toward{" "}
                   <span className="italic font-normal">Wholeness</span>
                 </h2>
                 <p className="text-primary/70 leading-relaxed mb-6">
-                  Satabhisha, founded by Astitwa Ankur, is a sanctuary for
+                  Shatabhisha, founded by Astitwa Ankur, is a sanctuary for
                   those seeking healing beyond the physical realm. Reiki, an
                   ancient Japanese energy healing technique, works by channeling
                   universal life force energy to where it&apos;s needed most.
@@ -396,7 +396,7 @@ export default function Home() {
             <p className="text-primary/60 mb-10 max-w-xl mx-auto leading-relaxed">
               Every healing journey begins with a single step. Whether
               you&apos;re new to energy work or deepening an existing practice,
-              Satabhisha is here to guide you.
+              Shatabhisha is here to guide you.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

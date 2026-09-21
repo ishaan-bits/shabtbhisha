@@ -78,13 +78,13 @@ export default function AdminLogin() {
           <div className="inline-flex items-center gap-2 mb-4">
             <Image
               src="/logo.png"
-              alt="Satabhisha"
+              alt="Shatabhisha"
               width={48}
               height={48}
               className="rounded-full brightness-0 invert"
             />
             <span className="font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">
-              Satabhisha
+              Shatabhisha
             </span>
           </div>
           <p className="text-white/50 text-sm">Admin Console</p>
@@ -107,7 +107,7 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@satabhisha.com"
+                placeholder="admin@shatabhisha.com"
                 className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
                 required
               />
