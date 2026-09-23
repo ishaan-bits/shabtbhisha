@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# iOS / Expo
+ios/ios/Pods/
+ios/ios/build/
+ios/ios/*.xcworkspace/xcuserdata/
+ios/.expo/
+ios/node_modules/
